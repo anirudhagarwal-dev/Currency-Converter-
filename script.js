@@ -1,5 +1,5 @@
 const BASE_URL =
-  "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies";
+  "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1";
 
 const dropdowns = document.querySelectorAll(".dropdown select");
 const btn = document.querySelector("form button");
@@ -8,7 +8,7 @@ const toCurr = document.querySelector(".to select");
 const msg = document.querySelector(".msg");
 
 for (let select of dropdowns) {
-  for (currCode in countryList) {
+  for (const currCode in countryList) {
     let newOption = document.createElement("option");
     newOption.innerText = currCode;
     newOption.value = currCode;
@@ -22,24 +22,46 @@ for (let select of dropdowns) {
 
   select.addEventListener("change", (evt) => {
     updateFlag(evt.target);
+    updateExchangeRate();
   });
 }
 
 const updateExchangeRate = async () => {
-  let amount = document.querySelector(".amount input");
-  let amtVal = amount.value;
-  if (amtVal === "" || amtVal < 1) {
-    amtVal = 1;
-    amount.value = "1";
+  const amountInput = document.querySelector(".amount input");
+  const raw = amountInput.value.trim();
+  if (raw === "") {
+    msg.innerText = "Enter amount";
+    return;
   }
-  const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}/${toCurr.value.toLowerCase()}.json`;
-  let response = await fetch(URL);
-  let data = await response.json();
-  let rate = data[toCurr.value.toLowerCase()];
-
-  let finalAmount = amtVal * rate;
-  msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
+  let amtVal = parseFloat(raw);
+  if (!Number.isFinite(amtVal) || amtVal <= 0) {
+    msg.innerText = "Enter a positive amount";
+    return;
+  }
+  msg.innerText = "Fetching rate...";
+  const from = fromCurr.value.toLowerCase();
+  const to = toCurr.value.toLowerCase();
+  const URL = `${BASE_URL}/currencies/${from}.json`;
+  try {
+    const response = await fetch(URL);
+    if (!response.ok) {
+      throw new Error("Failed to fetch");
+    }
+    const data = await response.json();
+    const rate = data[from]?.[to];
+    if (!Number.isFinite(rate)) {
+      throw new Error("Invalid rate");
+    }
+    const finalAmount = (amtVal * rate).toFixed(4);
+    msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
+  } catch (e) {
+    msg.innerText = "Unable to fetch rate. Please try again.";
+  }
 };
+
+document.querySelector(".amount input").addEventListener("input", () => {
+  updateExchangeRate();
+});
 
 const updateFlag = (element) => {
   let currCode = element.value;
