@@ -23,7 +23,6 @@ for (let select of dropdowns) {
 
   select.addEventListener("change", (evt) => {
     updateFlag(evt.target);
-    updateExchangeRate();
   });
 }
 
@@ -60,10 +59,6 @@ const updateExchangeRate = async () => {
   }
 };
 
-document.querySelector(".amount input").addEventListener("input", () => {
-  updateExchangeRate();
-});
-
 const updateFlag = (element) => {
   let currCode = element.value;
   let countryCode = countryList[currCode];
@@ -83,9 +78,6 @@ swapIcon.addEventListener("click", () => {
   toCurr.value = temp;
   updateFlag(fromCurr);
   updateFlag(toCurr);
-  updateExchangeRate();
 });
 
-window.addEventListener("load", () => {
-  updateExchangeRate();
-});
+window.addEventListener("load", () => {});
