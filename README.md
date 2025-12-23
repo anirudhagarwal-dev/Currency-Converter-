@@ -1,8 +1,18 @@
-# Currency Converter
+# 💱 Currency Converter
 
-Simple, static web app to convert between world currencies using the free API.
+A lightweight, client-side currency converter built with HTML, CSS, and JavaScript.
 
-## Features
+## ✨ Features
+- 🌐 Select From/To currencies with country flags
+- 🔄 One-click swap between currencies
+- ⚡ Live exchange rates via `@fawazahmed0/currency-api`
 
-- Real-time conversion as you type or change currencies
-- Country flags for selected currencies
+## 🚀 Getting Started
+- 📁 Clone or download this repository
+- 🖱️ Open `index.html` directly in your browser
+
+## 📁 Project Structure
+- `index.html` – page markup
+- `style.css` – styles
+- `codes.js` – currency-to-country map
+- `script.js` – converter logic and API fetch
